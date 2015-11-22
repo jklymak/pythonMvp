@@ -1,0 +1,10 @@
+import time
+import os
+while 1:
+    str= "xcopy Z:\\ c:\\cygwin\\home\\analysis\\DC15\\mvp\\data\\ /d /y"
+    print "Running " + str
+    os.system(str)
+    print "Done: sleeping 60 s"
+    for i in range(3,60,3):
+        print('.'),
+        time.sleep(3)
