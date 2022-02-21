@@ -7,7 +7,8 @@ Created on Tue May 07 12:48:32 2013
 import numpy as np
 from matplotlib.dates import date2num
 import datetime
-import seawater.eos80 as sw
+import seawater as sw
+
 import numpy.lib.recfunctions as rec
 #import time
 import scipy.signal as signal
@@ -83,43 +84,15 @@ def loadMVP_raw(file, condOffset=2.25):
         )
         N = len(data['index'])
         tt=np.arange(0,N,1.)
-        data['condutivity']=np.interp(tt-condOffset, tt, data['conductivity0'])
+        data['conductivity']=np.interp(tt-condOffset, tt, data['conductivity0'])
+        print(sw.constants.c3515)
+        data['salinity'] = sw.eos80.salt(data['conductivity']/ sw.constants.c3515, data['temperature'],
+                                   data['pressure'])
+        data['pden'] = sw.eos80.pden(data['salinity'], data['temperature'],
+                                   data['pressure'], 0)
 
         if analog:
             data['analog'] = data0['analog']
 
         return data
-
-
-def binMVPdata(binx,x,X):
-
-    import numpy as np
-
-    N = np.size(binx,0) #
-
-
-    meanX = np.zeros((N,1))  #placeholder for the mean value in the bin
-    sumX = np.zeros((N,1))  #placeholder for the sum in the bin
-    varX = np.zeros((N,1))  #placeholder for variance in the bin
-    nX = np.zeros((N,1))    #placeholder for the number of samples in the bin
-
-
-    indx = np.floor(np.interp(x,binx,np.arange(0,N,1.0)))
-
-    for ind in range(len(x)): #increments on the number of lines in X
-        sumX[indx[ind],0]+=X[ind]
-        nX[indx[ind],0]+=1
-        varX[indx[ind],0]+=(meanX[indx[ind],0]-X[ind])**2
-
-    nX[nX==0.0]=np.NaN
-    meanX = sumX/nX
-
-    varX = varX/nX
-
-
-    return meanX
-
-
-#file = 'C:\\Rowan\\MVP\\dat\\data\\mvplm12_0650.raw'
-#profile_grid, profile_xyt, data = loadMVP_raw(file)
 

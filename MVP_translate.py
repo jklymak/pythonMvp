@@ -38,12 +38,12 @@ while 1:
     else:
       fexists.append(inds)
     if dofile:
-      try:
+      if True:
         # translate:
         data = loadMVP_raw(rawname, condOffset=2.25)
         data.to_netcdf(ncname)
         goodfiles.append(inds)
-      except:
+      else:
         badfiles.append(inds)
         print('Error with file %04d' % inds)
     inds = inds+1 # check the next file
