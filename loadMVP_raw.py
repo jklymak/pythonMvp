@@ -15,7 +15,7 @@ import binMVPdata
 import calendar
 import xarray as xr
 
-def loadMVP_raw(file,depthbins):
+def loadMVP_raw(file, condOffset=2.25):
        # try:
     with open(file, 'r') as f:
         header = f.read(7000) #read in 7000 bytes to get the header
@@ -63,13 +63,12 @@ def loadMVP_raw(file,depthbins):
         if newline2 - newline1 > 26:
             data0 = np.genfromtxt(file, usecols = (0,1,2,3), skip_header = 61,
                                  names = ["pressure","cond","temp","analog"])
+            analog = True
         else:
-
+            analog = False
             data0 = np.genfromtxt(file, usecols = (0,1,2), skip_header = 61,
                                  names = ["pressure","cond","temp"] )
-            temparray = np.empty((data0['pressure'].shape))
-            temparray.fill(np.NaN)
-            data0 = rec.append_fields(data0,'analog', temparray, dtypes = float)
+
         # convert from data0 to data
         data = xr.Dataset(data_vars=dict(
                 temperature=(['index'], data0['temp']),
@@ -84,7 +83,10 @@ def loadMVP_raw(file,depthbins):
         )
         N = len(data['index'])
         tt=np.arange(0,N,1.)
-        data['condutivity']=np.interp(tt-2.25,tt,data['conductivity0'])
+        data['condutivity']=np.interp(tt-condOffset, tt, data['conductivity0'])
+
+        if analog:
+            data['analog'] = data0['analog']
 
         return data
 

@@ -1,21 +1,10 @@
-# -*- coding: utf-8 -*-
-
-"""
-Created on Mon Mar 25 10:50:04 2013
-
-@author: FoxR
-"""
-#def MVP_dataprocess():
 import numpy as np
-import glob
 from loadMVP_raw import loadMVP_raw
 import time
 import os.path
-#import numpy
 
-#datafolder = 'C:/Rowan/MVP/dat\data'
+
 prefix = 'mvpla16_'
-#remotefolder = 'C:/cygwin/home/analysis/Test/mvp/data/'
 basedir='/Users/jklymak/Dropbox/pythonMvp/sampledata/'
 datafolder = basedir+'raw/'
 ncCastfolder = basedir+'nccasts/'
@@ -49,14 +38,12 @@ while 1:
     else:
       fexists.append(inds)
     if dofile:
-      if 1:
+      try:
         # translate:
-        header, data = loadMVP_raw(rawname,depth_bins)
-        print(header)
-        print(data)
+        data = loadMVP_raw(rawname, condOffset=2.25)
         data.to_netcdf(ncname)
         goodfiles.append(inds)
-      else:
+      except:
         badfiles.append(inds)
         print('Error with file %04d' % inds)
     inds = inds+1 # check the next file
