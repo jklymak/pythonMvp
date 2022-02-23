@@ -1,0 +1,70 @@
+Index: 0103                                                                                   
+PC Time: 01:59:59                                                                             
+PC Date: 21-01-2016                                                                           
+Ndecimate: 0                                                                                  
+Version: 2.430                                                                                
+**********************************************************************************************
+Bottom Depth (m): 2086.9                                                                      
+Ship's Log (kt): 7.0                                                                          
+LAT ( ddmm.mmmmmmm,N):  2904.0488000,N                                                        
+LON (dddmm.mmmmmmm,E): 08731.7683000,W                                                        
+Heading (deg): 000.0                                                                          
+Time (hh|mm|ss.s): 01:59:59.7                                                                 
+Date (dd/mm/yyyy): 21/01/2016                                                                 
+**********************************************************************************************
+DOCK Cable Out (m): 0.0                                                                       
+X_Depth (m): -1.0                                                                             
+X_SV (m/s): 0.0                                                                               
+**********************************************************************************************
+Serial Format: 1                                                                              
+Serial Instruments: 1                                                                         
+Serial Main: 1                                                                                
+**********************************************************************************************
+SER1 Type: 7, AML_uCTD                                                                        
+SER1 FID: M                                                                                   
+SER1 Serial Number: 8506                                                                      
+SER1 Press Offset: 0.00                                                                       
+SER1 CSV Offset: 0.000                                                                        
+SER1 Temp Offset: 0.000                                                                       
+SER1 Num5Vin: 0                                                                               
+**********************************************************************************************
+SER2 Type: 0, None                                                                            
+SER2 FID:                                                                                     
+SER2 Serial Number: 0                                                                         
+SER2 Press Offset: 0.00                                                                       
+SER2 CSV Offset: 0.000                                                                        
+SER2 Temp Offset: 0.000                                                                       
+SER2 Num5Vin: 0                                                                               
+**********************************************************************************************
+SER3 Type: 0, None                                                                            
+SER3 FID:                                                                                     
+SER3 Serial Number: 0                                                                         
+SER3 Press Offset: 0.00                                                                       
+SER3 CSV Offset: 0.000                                                                        
+SER3 Temp Offset: 0.000                                                                       
+SER3 Num5Vin: 0                                                                               
+**********************************************************************************************
+BOT F1:                                                                                       
+BOT F2:                                                                                       
+BOT F3:                                                                                       
+BOT F4:                                                                                       
+BOT F5:                                                                                       
+BOT F6: NAV_vessel_heading_input_timed_out.                                                   
+BOT F7: $GPGGA,020002,2904.0488,N,08731.7683,W,1,8,1.7,14,M,,M,,*57                           
+BOT F8: PC_UTC_Date/Time                                                                      
+BOT F9: $SDDBS,210120,015957,2572.53,2086.89                                                  
+BOT F10:$GPVTG,71.3,T,73.7,M,7.0,N,13.0,K*7D                                                  
+**********************************************************************************************
+<END_OF_HEADER>                                                                               
+
+
+
+[01:59:55.2] EVENT: START,01:59:55.2,2904.0457000,N,08731.7793000,W,7.1,kts,2716.1,m,0.0,m,0.0,m/s,48.0,kg,00h,0080h,0000h,5.5,m,0.0,deg
+[01:59:55.2] DCFG: 1,20.0,m,200.0,m,375.0,m,1.0,kts,13.0,kts
+[01:59:58.0] MVP PROFILING MODE: FreeWheel
+[01:59:59.6] EVENT: DWNBO,01:59:59.7,2904.0488000,N,08731.7683000,W,7.0,kts,2086.9,m,0.0,m,0.0,m/s,34.0,kg,00h,0080h,0000h,6.3,m,0.0,deg
+[02:00:15.0] MVP CAST TERMINATED - NoDockDetected,
+[02:00:17.5] EVENT: DWNB1,02:00:17.2,2904.0589000,N,08731.7317000,W,7.0,kts,3637.2,m,104.3,m,2.3,m/s,65.0,kg,00h,0080h,0000h,69.6,m,0.0,deg
+[02:00:17.5] AUTORECOVER aborted - DOCK messenger not detected in the down cast!
+[02:00:17.6] EVENT: STOP_,02:00:17.2,2904.0589000,N,08731.7317000,W,7.0,kts,3637.2,m,104.3,m,2.3,m/s,65.0,kg,00h,0080h,0000h,69.6,m,0.0,deg
+[02:00:17.6] SUMMARY: 22.0,s,18.0,s,0.0,s,0.0,m,179.0,kg,72.7,m
