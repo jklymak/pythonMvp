@@ -85,116 +85,116 @@ def loadMVP_raw(file, condOffset=2.25):
 logger = logging.getLogger(__name__)
 def raw_to_netcdf(datafolder, ncCastfolder, prefix, first=1, last=5000):
 
-  newFile = False
-  badfiles=[]
-  goodfiles=[]
-  fexists=[]
-  print ("Translating: "+ datafolder+prefix+"*")
-  print ("  to: "+ ncCastfolder)
-  inds = first
-  while (inds<=last):
-    dofile=True
-    # check if we have already translated this file and that the translation
-    # is newer, in which case dont do this file
-    rawname=datafolder+prefix+'%04d'%inds + '.raw'
-    logname=datafolder+prefix+'%04d'%inds + '.log'
-    ncname= ncCastfolder+prefix+'%04d'%inds + '.nc'
-    if os.path.isfile(ncname):
-      ncfiletime=os.path.getmtime(ncname)
-      rawfiletime=os.path.getmtime(rawname)
-      if (ncfiletime>=rawfiletime+10*60):
-        dofile=False
-    if not(os.path.isfile(rawname)):
-      #print prefix+'%04d'%inds + '.raw doesn''t exist'
-      dofile=False
-    else:
-      # file exists, but is the cast done?
-      done = False
-      with open(logname, 'r') as flog:
-        for l in flog:
-          if 'SUMMARY' in l:
-            done = True
-            break
-      if done:
-        fexists.append(inds)
-      else:
-        dofile = False
-    if dofile:
-      try:
-        # translate:
-        newFile = True
-        logger.info(f'opening {rawname}')
-        data = loadMVP_raw(rawname, condOffset=2.25)
-        logger.info(f'writing {ncname}')
-        data.to_netcdf(ncname)
-        goodfiles.append(inds)
-      except:
-        badfiles.append(inds)
-        logger.info('Error with file %04d' % inds)
-    inds = inds+1 # check the next file
-  # done checking all the files that we wanted to check...
+    newFile = False
+    badfiles=[]
+    goodfiles=[]
+    fexists=[]
+    logger.info("Translating: " + datafolder + prefix + "*")
+    logger.info("to: " + ncCastfolder)
+    inds = first
+    while (inds<=last):
+        dofile=True
+        # check if we have already translated this file and that the translation
+        # is newer, in which case dont do this file
+        rawname=datafolder+prefix+'%04d'%inds + '.raw'
+        logname=datafolder+prefix+'%04d'%inds + '.log'
+        ncname= ncCastfolder+prefix+'%04d'%inds + '.nc'
+        logger.debug(f'Testing {ncname}')
+        if os.path.isfile(ncname):
+            ncfiletime=os.path.getmtime(ncname)
+            rawfiletime=os.path.getmtime(rawname)
+            if (ncfiletime>=rawfiletime+10*60):
+                dofile=False
+        if not(os.path.isfile(rawname)):
+            #print prefix+'%04d'%inds + '.raw doesn''t exist'
+            dofile=False
+        else:
+            # file exists, but is the cast done?
+            done = False
+            with open(logname, 'r') as flog:
+              for l in flog:
+                if 'SUMMARY' in l:
+                  done = True
+                  break
+            if done:
+              fexists.append(inds)
+            else:
+              dofile = False
+        if dofile:
+            try:
+                # translate:
+                newFile = True
+                logger.info(f'opening {rawname}')
+                data = loadMVP_raw(rawname, condOffset=2.25)
+                logger.info(f'writing {ncname}')
+                data.to_netcdf(ncname)
+                goodfiles.append(inds)
+            except:
+                badfiles.append(inds)
+                logger.info('Error with file %04d' % inds)
+        inds = inds+1 # check the next file
+    # done checking all the files that we wanted to check...
 
-  logger.info('Done checking files: ')
-  logger.info('Files %d to %d exist' % (fexists[0],fexists[-1]))
-  logger.info('Files done:')
-  logger.info(goodfiles)
-  logger.info('Bad files:')
-  logger.info(badfiles)
+    logger.info('Done checking files: ')
+    logger.info('Files %d to %d exist' % (fexists[0],fexists[-1]))
+    logger.info('Files done:')
+    logger.info(goodfiles)
+    logger.info('Bad files:')
+    logger.info(badfiles)
 
-  return newFile
-
+    return newFile
 
 
 def mvpgridfield(depth_bins, cast, td):
-  p = np.convolve(np.ones(10) / 10, cast['pressure'], mode='same')
-  dp = np.diff(p)
-  good = np.where(dp>0.05)
-  dat = depth_bins[1:] * np.NaN
-  if len(good) > 0:
-    with np.errstate(invalid='ignore'):
-      dat = (np.histogram(cast['pressure'][good], weights=cast[td][good],
-                          bins=depth_bins)[0] /
-            np.histogram(cast['pressure'][good],
-                          bins=depth_bins)[0])
-  return dat
+    p = np.convolve(np.ones(10) / 10, cast['pressure'], mode='same')
+    dp = np.diff(p)
+    good = np.where(dp>0.05)
+    dat = depth_bins[1:] * np.NaN
+    if len(good) > 0:
+        with np.errstate(invalid='ignore'):
+          dat = (np.histogram(cast['pressure'][good], weights=cast[td][good],
+                            bins=depth_bins)[0] /
+                 np.histogram(cast['pressure'][good],
+                            bins=depth_bins)[0])
+    return dat
 
 def profiles_to_grid(depth_bins, filestodo, ncCastfolder, prefix, outFilen):
 
-  depths = (depth_bins[1:] + depth_bins[:-1]) / 2
+    depths = (depth_bins[1:] + depth_bins[:-1]) / 2
 
-  gridfields = ['temperature','salinity','analog', 'pressure','pden']
-  gridxytfields = ['latitude','longitude','datetime','bottom']
+    gridfields = ['temperature','salinity','analog', 'pressure','pden']
+    gridxytfields = ['latitude','longitude','datetime','bottom']
 
-  analog = False
-  # now make the grid.  This is just concatenating the gridded profiles stored
-  # in the pickle
-  Ncasts = len(filestodo)
-  Nbins = len(depths)
-  logger.info("Griding: ##################################")
-  cgrid = xr.Dataset(coords={'depths': depths,
-                            'cast_number': filestodo},
-                    data_vars={'temperature':(['depths', 'cast_number'],
-                                np.zeros((Nbins, Ncasts)))
-                    })
-  for td in gridxytfields:
-    cgrid[td] = (['cast_number'], np.zeros(Ncasts))
-  for td in gridfields:
-    cgrid[td] = (['depths', 'cast_number'], np.zeros((Nbins, Ncasts)) * np.NaN)
+    analog = False
+    # now make the grid.  This is just concatenating the gridded profiles stored
+    # in the pickle
+    Ncasts = len(filestodo)
+    Nbins = len(depths)
+    logger.info("Griding: ##################################")
+    cgrid = xr.Dataset(coords={'depths': depths,
+                              'cast_number': filestodo},
+                      data_vars={'temperature':(['depths', 'cast_number'],
+                                  np.zeros((Nbins, Ncasts)))
+                      })
+    for td in gridxytfields:
+        cgrid[td] = (['cast_number'], np.zeros(Ncasts))
+    for td in gridfields:
+        cgrid[td] = (['depths', 'cast_number'], np.zeros((Nbins, Ncasts)) * np.NaN)
 
-  num = 0
-  for inds in filestodo:
-    with xr.open_dataset(f'{ncCastfolder}/{prefix}{inds:04d}.nc') as cast:
-      if 'analog' in cast:
-        analog = True
-      for td in gridxytfields:
-        cgrid[td][num] = cast[td].values[0]
-      for td in gridfields:
-        if td in cast:
-          cgrid[td][:, num] = mvpgridfield(depth_bins, cast, td)
-      num += 1
-  if not analog:
-    cgrid = cgrid.drop('analog')
+    num = 0
+    for inds in filestodo:
+        with xr.open_dataset(f'{ncCastfolder}/{prefix}{inds:04d}.nc') as cast:
+            if 'analog' in cast:
+                analog = True
+            for td in gridxytfields:
+                cgrid[td][num] = cast[td].values[0]
+            for td in gridfields:
+                if td in cast:
+                    cgrid[td][:, num] = mvpgridfield(depth_bins, cast, td)
+            num += 1
+    if not analog:
+        cgrid = cgrid.drop('analog')
 
-  cgrid.to_netcdf(outFilen)
+    cgrid.to_netcdf(outFilen)
 
 

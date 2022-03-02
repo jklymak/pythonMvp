@@ -1,8 +1,8 @@
 from MVP_translate import raw_to_netcdf, profiles_to_grid
-from MVP_makeGridfile import profiles_to_grid
 from tqdm import tqdm
 import numpy as np
 from time import sleep
+import os
 import logging
 
 logging.basicConfig(level=logging.INFO)
